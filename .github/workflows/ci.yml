@@ -1,0 +1,62 @@
+name: CI
+
+on:
+  workflow_dispatch: {}
+  push:
+    branches:
+      - main
+      - beta
+      - sdk-release/**
+      - feature/**
+    tags:
+      - v[0-9]+.[0-9]+.[0-9]+*
+  pull_request:
+    branches:
+      - main
+      - beta
+      - sdk-release/**
+      - feature/**
+
+jobs:
+  lint:
+    name: Lint & Mypy
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Python 3
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.10"
+      - name: mypy
+        run: make mypy
+      - name: lint
+        run: make lint
+      - name: fmtcheck
+        run: make fmtcheck
+
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Python 3
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.10"
+
+      - name: Install tools
+        run: make venv
+
+      - name: Build and check package
+        run: |
+          set -x
+          source venv/bin/activate
+          python setup.py clean --all sdist bdist_wheel --universal
+          python -m twine check dist/*
+
+      - name: "Upload Artifact"
+        uses: actions/upload-artifact@v3
+        with:
+          name: dist
+          path: dist/
