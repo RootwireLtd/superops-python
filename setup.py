@@ -13,9 +13,8 @@ with open(
 
 version_contents = {}
 with open(
-    os.path.join(
-        here, "rw-superops", "_version.py"
-        ), encoding="utf-8") as f:
+    os.path.join(here, "rw-superops", "_version.py"), encoding="utf-8"
+) as f:
     exec(f.read(), version_contents)
 
 setup(
