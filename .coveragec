@@ -1,0 +1,9 @@
+[paths]
+source =
+    rw-superops
+    */site-packages
+
+[run]
+branch = true
+parallel = true
+source = rw-superops
